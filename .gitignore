@@ -36,6 +36,10 @@ data/
 .DS_Store
 Thumbs.db
 
+# Playwright E2E 테스트 결과
+e2e-report/
+test-results/
+
 # Claude Code (v6 Post-Dev Workflow)
 .claude/handoff.md
 .claude/checkpoints/

@@ -1,6 +1,10 @@
-import { auth } from '@/lib/auth'
+import NextAuth from 'next-auth'
+import { authConfig } from '@/lib/auth.config'
 import { NextResponse } from 'next/server'
 import type { UserRole } from '@/types'
+
+// Edge Runtime 호환: DB 없이 JWT 토큰으로만 세션 확인
+const { auth } = NextAuth(authConfig)
 
 // 역할별 허용 경로 prefix
 const ROLE_PATH_MAP: Record<UserRole, string> = {

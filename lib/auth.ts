@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { db } from './db'
 import { users } from './schema'
+import { authConfig } from './auth.config'
 import type { UserRole } from '@/types'
 
 const loginSchema = z.object({
@@ -13,6 +14,7 @@ const loginSchema = z.object({
 })
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -46,32 +48,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = user.role
-        token.rank = user.rank
-        token.unit = user.unit
-        token.storeId = user.storeId
-        token.tailorId = user.tailorId
-      }
-      return token
-    },
-    session({ session, token }) {
-      session.user.id = token.id as string
-      session.user.role = token.role as UserRole
-      session.user.rank = token.rank as string | undefined
-      session.user.unit = token.unit as string | undefined
-      session.user.storeId = token.storeId as string | undefined
-      session.user.tailorId = token.tailorId as string | undefined
-      return session
-    },
-  },
-  pages: {
-    signIn: '/login',
-  },
-  session: {
-    strategy: 'jwt',
-  },
 })
