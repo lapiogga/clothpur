@@ -1,0 +1,42 @@
+# 환경 변수
+.env
+.env.local
+.env.*.local
+
+# 의존성
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 빌드 결과물
+dist/
+build/
+*.o
+*.exe
+.next/
+
+# Next.js
+*.tsbuildinfo
+next-env.d.ts
+
+# DB 파일
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code (v6 Post-Dev Workflow)
+.claude/handoff.md
+.claude/checkpoints/
+.claude/web-checklist-state.json
