@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { label: '오프라인 판매', href: '/store/sales' },
   { label: '재고 관리', href: '/store/inventory' },
   { label: '주문 현황', href: '/store/orders' },
+  { label: '배송지 관리', href: '/store/delivery-zones' },
 ]
 
 export function StoreSidebar() {

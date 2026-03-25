@@ -9,6 +9,7 @@ import {
   productSpecs,
   inventory,
   inventoryLog,
+  deliveryZones,
   pointSummary,
   pointLedger,
   tailoringTickets,
@@ -38,6 +39,8 @@ const onlineOrderSchema = z.object({
     quantity: z.number().int().positive(),
   })).min(1, '주문 품목을 선택하세요'),
   storeId: z.string().min(1, '배송 판매소를 선택하세요'),
+  deliveryMethod: z.enum(['parcel', 'direct']).default('parcel'),
+  deliveryZoneId: z.string().optional(),
   deliveryAddress: z.string().optional(),
 })
 
@@ -50,7 +53,20 @@ export async function createOnlineOrderAction(data: unknown) {
   const parsed = onlineOrderSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: '입력값 오류' }
 
-  const { items, storeId, deliveryAddress } = parsed.data
+  const { items, storeId, deliveryMethod, deliveryZoneId, deliveryAddress } = parsed.data
+
+  // 직접배송 배송지 유효성 검증
+  if (deliveryMethod === 'direct') {
+    if (!deliveryZoneId) {
+      return { success: false, error: '직접배송 배송지를 선택하세요' }
+    }
+    const zone = db.select().from(deliveryZones)
+      .where(and(eq(deliveryZones.id, deliveryZoneId), eq(deliveryZones.storeId, storeId), eq(deliveryZones.isActive, true)))
+      .get()
+    if (!zone) {
+      return { success: false, error: '유효하지 않은 배송지입니다' }
+    }
+  }
   const userId = session.user.id!
 
   // 포인트 요약 조회
@@ -133,8 +149,9 @@ export async function createOnlineOrderAction(data: unknown) {
       productType,
       status: 'pending',
       totalAmount,
-      deliveryMethod: 'parcel',
-      deliveryAddress: deliveryAddress ?? null,
+      deliveryMethod,
+      deliveryZoneId: deliveryMethod === 'direct' ? (deliveryZoneId ?? null) : null,
+      deliveryAddress: deliveryMethod === 'parcel' ? (deliveryAddress ?? null) : null,
     }).run()
 
     // 주문 조회 (ID 획득)

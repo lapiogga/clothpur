@@ -243,3 +243,4 @@ processTransaction()
 | 2026-03-04 | v1.0 | 최초 작성 (Supabase 기반) | project-manager |
 | 2026-03-04 | v1.1 | DB 변경: Supabase → SQLite + Drizzle ORM + NextAuth.js | project-manager |
 | 2026-03-05 | v1.2 | Next.js 프로젝트 초기화 완료, 폴더 구조 src/ → root-level로 변경, Team Agent + Forge 파이프라인 추가 | developer |
+| 2026-03-05 | v1.3 | Phase 6 테스트 완료 (825건 데이터, 40/40 통과), Phase 7 E2E 테스트 24/24 통과 (Playwright), 온라인 쇼핑 판매소 선택 선행 + 재고 기반 품목 필터링, 배송방식 선택(택배/직접배송), 판매소 배송지 관리 페이지 추가 | developer |

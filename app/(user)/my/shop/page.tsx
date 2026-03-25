@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { products, productSpecs, categories, stores, pointSummary } from '@/lib/schema'
-import { eq, and } from 'drizzle-orm'
+import { products, productSpecs, categories, stores, inventory, deliveryZones, pointSummary } from '@/lib/schema'
+import { eq } from 'drizzle-orm'
 import { ShopClient } from './_components/shop-client'
 
 export default async function ShopPage() {
@@ -35,6 +35,25 @@ export default async function ShopPage() {
     .where(eq(stores.isActive, true))
     .all()
 
+  // 전체 재고 데이터 (판매소별 필터링은 클라이언트에서 처리)
+  const allInventory = db.select({
+    storeId: inventory.storeId,
+    specId: inventory.specId,
+    productId: inventory.productId,
+    quantity: inventory.quantity,
+  }).from(inventory).all()
+
+  // 판매소별 직접배송 배송지 (활성화된 것만)
+  const allDeliveryZones = db.select({
+    id: deliveryZones.id,
+    storeId: deliveryZones.storeId,
+    name: deliveryZones.name,
+    address: deliveryZones.address,
+  })
+    .from(deliveryZones)
+    .where(eq(deliveryZones.isActive, true))
+    .all()
+
   const productList = allProducts
     .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
     .map(p => ({
@@ -53,6 +72,8 @@ export default async function ShopPage() {
     <ShopClient
       products={productList}
       stores={activeStores}
+      inventoryData={allInventory}
+      deliveryZonesData={allDeliveryZones}
       availablePoints={availablePoints}
     />
   )
